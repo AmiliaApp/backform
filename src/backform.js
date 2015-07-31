@@ -39,7 +39,8 @@
     helpClassName: "help-block",
     errorClassName: "has-error",
     helpMessageClassName: "help-block",
-    hiddenClassname: "hidden",
+    hiddenClassName: "hidden",
+    requiredInputClassName: undefined,
 
     // Bootstrap 2.3 adapter
     bootstrap2: function() {
@@ -318,10 +319,18 @@
       });
 
       // Clean up first
-      this.$el.removeClass(Backform.hiddenClassname);
+      this.$el.removeClass(Backform.hiddenClassName);
 
       if (!data.visible)
-        this.$el.addClass(Backform.hiddenClassname);
+        this.$el.addClass(Backform.hiddenClassName);
+
+      if(Backform.requiredInputClassName) {
+        this.$el.removeClass(Backform.requiredInputClassName);
+      }
+
+      if (data.required) {
+        this.$el.addClass(Backform.requiredInputClassName);
+      }
 
       this.$el.html(this.template(data)).addClass(field.name);
       this.updateInvalid();
