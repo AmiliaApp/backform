@@ -32,6 +32,7 @@
       .bs-sidebar .nav > li.active > a {color: white;}
       .bs-sidebar .nav > li.active > a:hover {background-color: #428bca;}
       .bs-sidebar .nav > li.active, .bs-sidebar .nav > li.active > a:hover {background-color: #428bca;}
+      .form-group.required .control-label:after {content:"*";color:red;}
     </style>
 
     <script type="text/javascript">
@@ -631,6 +632,41 @@ new Backform.Form({
     })
   }]
 }).render();
+</pre>
+<br/>
+          <h3>Required Attribute</h3>
+          <p>
+          You can conditionally set a control required. When you set it to true, the control take an <code>required</code> attribute and the <code>form-group</code> take a class named <code>requiredInputClassName</code>. Defaults to undefined, you must extend Backform to add it . With Bootstrap you can easily add an asterisk after the label. For example
+          </p>
+          <form id="form-required" class="form-horizontal"></form>
+          <p><button class="btn btn-primary show-code" for="#form-required-code">&lt;/&gt; Show Code</button></p>
+          <pre id="form-required-code" style="display:none;">
+// Example (required attribute)
+// JS
+//Extending Backform to add class name for required form-group
+  _.extend(Backform, {
+    requiredInputClassName: "required"
+  });
+
+//Example with required input
+  new Backform.Form({
+    el: $("#form-required"),
+    model: new Backbone.Model({age: undefined}),
+    fields: [{
+      name: "age",
+      label: "Age",
+      control: "input",
+      required: true
+    }]
+  }).render();
+
+//CSS
+.form-group.required .control-label:after {
+    content:"*";
+    color:red;
+}
+
+//HTML
 </pre>
           <br/>
         </div>

@@ -149,6 +149,25 @@ $(document).ready(function() {
     }]
   }).render();
 
+// Example with require input
+  _.extend(Backform, {
+    requiredInputClassName: "required"
+  });
+  new Backform.Form({
+    el: $("#form-required"),
+    model: new Backbone.Model({age: undefined}),
+    fields: [{
+      name: "age",
+      label: "Age",
+      control: "input",
+      required: true
+    }]
+  }).render();
+  // Deleting requiredInputClass for the next example
+  _.extend(Backform, {
+    requiredInputClassName: "required"
+  });
+
   // Example with input of type email
   new Backform.Form({
     el: $("#form-email"),
