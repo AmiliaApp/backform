@@ -387,9 +387,17 @@
       if (e.which == 9) {
         var $target = $(e.currentTarget);
         setTimeout(function() {
-          var $nextFocus = !!$target.nextAll(':input:visible').length ?
-                           $target.nextAll(':input:visible').first() :
-                           $target.closest('.control-group:visible').next('.control-group:visible').find(':input:visible');
+          var $nextFocus;
+          if (e.shiftKey) {
+            $nextFocus = !!$target.prevAll(':input:visible').length ?
+                         $target.prevAll(':input:visible').first() :
+                         $target.closest('.control-group:visible').prev('.control-group:visible').find(':input:visible');
+          } else {
+            $nextFocus = !!$target.nextAll(':input:visible').length ?
+                         $target.nextAll(':input:visible').first() :
+                         $target.closest('.control-group:visible').next('.control-group:visible').find(':input:visible');
+          }
+
           if ($nextFocus.length) $nextFocus.first().focus();
         }, 0);
       }
