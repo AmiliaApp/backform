@@ -21,6 +21,7 @@
 	"files": [
 		"src/backform.js"
 	],
+	"browser": "./src/backform.js",
 	"license": {
 		"type": "MIT",
 		"url": "https://github.com/AmiliaApp/backform/blob/gh-pages/LICENSE"
