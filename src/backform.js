@@ -356,11 +356,13 @@
           error = self.keyPathAccessor(errorModel.toJSON(), $(el).attr('name'));
 
         if (_.isEmpty(error)) return;
-        if (_.isEmpty(error)) return;
 
         self.$el.addClass(Backform.errorClassName);
-        self.$el.find("." + Backform.controlsClassName)
-          .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(", ") : error) + '</span>');
+        if (ix === 0) {
+          self.$el
+            .find("." + Backform.controlsClassName)
+            .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(", ") : error) + '</span>');
+        }
       });
 
       return this;
