@@ -343,8 +343,9 @@
       return this;
     },
     updateInvalid: function() {
-      var self = this;
-      var errorModel = this.model.errorModel;
+      var self = this,
+          errorModel = this.model.errorModel,
+          handledErrors = [];
       if (!(errorModel instanceof Backbone.Model)) return this;
 
       this.clearInvalid();
@@ -355,14 +356,14 @@
           path = attrArr.join('.'),
           error = self.keyPathAccessor(errorModel.toJSON(), $(el).attr('name'));
 
-        if (_.isEmpty(error)) return;
+        if (_.isEmpty(error) || _.indexOf(handledErrors, error) >= 0) return;
 
-        self.$el.addClass(Backform.errorClassName);
-        if (ix === 0) {
-          self.$el
-            .find("." + Backform.controlsClassName)
-            .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(", ") : error) + '</span>');
-        }
+        self.$el
+          .addClass(Backform.errorClassName)
+          .find("." + Backform.controlsClassName)
+          .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(", ") : error) + '</span>');
+
+        handledErrors.push(error);
       });
 
       return this;
