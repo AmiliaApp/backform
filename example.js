@@ -23,6 +23,7 @@ $(document).ready(function() {
     },
     dateOfBirth: "1990-10-10",
     lifeGoal: "To become the best basketball player there is. I want to dunk!",
+    favoriteNumber: 4,
     jsonValue: null
   });
 
@@ -71,6 +72,7 @@ $(document).ready(function() {
       },
       {name: "dateOfBirth", label: "Date of birth", control: "datepicker", options: {format: "yyyy-mm-dd"}},
       {name: "lifeGoal", label: "Life goal", control: "textarea", extraClasses: ["fancy"], helpMessage: "Be creative!"},
+      {name: "favoriteNumber", label: "Favorite Number", control: "input", type: "number"},
       {
         name: "jsonValue",
         label: "JSON value",
@@ -229,7 +231,7 @@ $(document).ready(function() {
     validate: function(attributes, options) {
       this.errorModel.clear();
 
-      var number = parseFloat(this.get("a"), 10);
+      var number = this.get("a");
       if (isNaN(number))
         this.errorModel.set({a: "Not a number!"});
       else if (number <= 10 || number >= 20)

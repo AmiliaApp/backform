@@ -537,6 +537,12 @@
       "change input": "onChange",
       "focus input": "clearInvalid"
     }),
+    initialize: function(options) {
+      if (typeof options == "object" && options.field && options.field.get("type") == "number") {
+        this.formatter = JSONFormatter;
+      }
+      Control.prototype.initialize.apply(this, arguments);
+    },
     getValueFromDOM: function() {
       return this.formatter.toRaw(this.$el.find("input").val(), this.model);
     }
