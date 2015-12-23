@@ -18,6 +18,7 @@
 		"html",
 		"javascript"
 	],
+	"main": "src/backform.js",
 	"files": [
 		"src/backform.js"
 	],
