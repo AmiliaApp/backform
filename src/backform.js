@@ -471,7 +471,6 @@
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
       '</div>'
-      '</div>'
     ].join("\n")),
     events: _.extend({}, Control.prototype.events, {
       "change select": "onChange",
