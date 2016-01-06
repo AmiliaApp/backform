@@ -456,7 +456,8 @@
     defaults: {
       label: "",
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
-      extraClasses: []
+      extraClasses: [],
+      helpMessage: null
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
