@@ -608,8 +608,8 @@
     }
   });
   _.extend(Backform, {
-    radioControlsClassName: "checkbox",
-    radioLabelClassName: "checkbox-inline"
+    radioControlsClassName: "radio",
+    radioLabelClassName: "radio-inline"
   });
 
   // Requires the Bootstrap Datepicker to work.
