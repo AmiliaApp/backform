@@ -31,32 +31,32 @@
   Backform = root.Backform = {
     // HTML markup global class names. More can be added by individual controls
     // using _.extend. Look at RadioControl as an example.
-    formClassName: "backform form-horizontal",
-    groupClassName: "form-group",
-    controlLabelClassName: "control-label col-sm-4",
-    controlsClassName: "col-sm-8",
-    controlClassName: "form-control",
-    helpClassName: "help-block",
-    errorClassName: "has-error",
-    helpMessageClassName: "help-block",
-    hiddenClassName: "hidden",
+    formClassName: 'backform form-horizontal',
+    groupClassName: 'form-group',
+    controlLabelClassName: 'control-label col-sm-4',
+    controlsClassName: 'col-sm-8',
+    controlClassName: 'form-control',
+    helpClassName: 'help-block',
+    errorClassName: 'has-error',
+    helpMessageClassName: 'help-block',
+    hiddenClassName: 'hidden',
     requiredInputClassName: undefined,
 
     // Bootstrap 2.3 adapter
     bootstrap2: function() {
       _.extend(Backform, {
-        groupClassName: "control-group",
-        controlLabelClassName: "control-label",
-        controlsClassName: "controls",
-        controlClassName: "input-xlarge",
-        helpClassName: "text-error",
-        errorClassName: "error",
-        helpMessageClassName: "help-message small"
+        groupClassName: 'control-group',
+        controlLabelClassName: 'control-label',
+        controlsClassName: 'controls',
+        controlClassName: 'input-xlarge',
+        helpClassName: 'text-error',
+        errorClassName: 'error',
+        helpMessageClassName: 'help-block help-message small'
       });
       _.each(Backform, function(value, name) {
         if (_.isFunction(Backform[name]) &&
-            _.isFunction(Backform[name].prototype["bootstrap2"]))
-          Backform[name].prototype["bootstrap2"]();
+            _.isFunction(Backform[name].prototype['bootstrap2']))
+          Backform[name].prototype['bootstrap2']();
       });
     },
     // https://github.com/wyuenho/backgrid/blob/master/lib/backgrid.js
@@ -67,7 +67,7 @@
         }).join('') + suffix;
         var klass = Backform[key];
         if (_.isUndefined(klass)) {
-          throw new ReferenceError("Class '" + key + "' not found");
+          throw new ReferenceError('Class "' + key + '" not found');
         }
         return klass;
       }
@@ -80,7 +80,7 @@
   var Form = Backform.Form = Backbone.View.extend({
     fields: undefined,
     errorModel: undefined,
-    tagName: "form",
+    tagName: 'form',
     className: function() {
       return Backform.formClassName;
     },
@@ -112,7 +112,7 @@
           controls = this.controls;
 
       this.fields.each(function(field) {
-        var control = new (field.get("control"))({
+        var control = new (field.get('control'))({
           field: field,
           model: model
         });
@@ -192,9 +192,9 @@
     defaults: {
       // Name of the model attribute
       // - It accepts "." nested path (e.g. x.y.z)
-      name: "",
+      name: '',
       // Placeholder for the input
-      placeholder: "",
+      placeholder: '',
       // Disable the input control
       // (Optional - true/false/function returning boolean)
       // (Default Value: false)
@@ -215,7 +215,7 @@
       formatter: undefined
     },
     initialize: function(attributes, options) {
-      var control = Backform.resolveNameToClass(this.get("control"), "Control");
+      var control = Backform.resolveNameToClass(this.get('control'), 'Control');
       this.set({control: control}, {silent: true});
     }
   });
@@ -241,12 +241,12 @@
       '    <%=value%>',
       '  </span>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     initialize: function(options) {
       // Back-reference to the field
       this.field = options.field;
 
-      var formatter = Backform.resolveNameToClass(this.field.get("formatter") || this.formatter, "Formatter");
+      var formatter = Backform.resolveNameToClass(this.field.get('formatter') || this.formatter, 'Formatter');
       if (!_.isFunction(formatter.fromRaw) && !_.isFunction(formatter.toRaw)) {
         formatter = new formatter();
       }
@@ -256,20 +256,20 @@
       var name = attrArr.shift();
 
       // Listen to the field in the model for any change
-      this.listenTo(this.model, "change:" + name, this.render);
+      this.listenTo(this.model, 'change:' + name, this.render);
 
       // Listen for the field in the error model for any change
       if (this.model.errorModel instanceof Backbone.Model)
-        this.listenTo(this.model.errorModel, "change:" + name, this.updateInvalid);
+        this.listenTo(this.model.errorModel, 'change:' + name, this.updateInvalid);
     },
     formatter: ControlFormatter,
     getValueFromDOM: function() {
-      return this.formatter.toRaw(this.$el.find(".uneditable-input").text(), this.model);
+      return this.formatter.toRaw(this.$el.find('.uneditable-input').text(), this.model);
     },
     onChange: function(e) {
       var model = this.model,
           $el = $(e.target),
-          attrArr = this.field.get("name").split('.'),
+          attrArr = this.field.get('name').split('.'),
           name = attrArr.shift(),
           path = attrArr.join('.'),
           value = this.getValueFromDOM(),
@@ -290,9 +290,9 @@
       changes[name] = _.isEmpty(path) ? value : _.clone(model.get(name)) || {};
 
       if (!_.isEmpty(path)) this.keyPathSetter(changes[name], path, value);
-      this.stopListening(this.model, "change:" + name, this.render);
+      this.stopListening(this.model, 'change:' + name, this.render);
       model.set(changes);
-      this.listenTo(this.model, "change:" + name, this.render);
+      this.listenTo(this.model, 'change:' + name, this.render);
     },
     render: function() {
       var field = _.defaults(this.field.toJSON(), this.defaults),
@@ -321,8 +321,9 @@
       // Clean up first
       this.$el.removeClass(Backform.hiddenClassName);
 
-      if (!data.visible)
+      if (!data.visible) {
         this.$el.addClass(Backform.hiddenClassName);
+      }
 
       if(Backform.requiredInputClassName) {
         this.$el.removeClass(Backform.requiredInputClassName);
@@ -339,7 +340,7 @@
     },
     clearInvalid: function() {
       this.$el.removeClass(Backform.errorClassName)
-        .find("." + Backform.helpClassName + ".error").remove();
+        .find('.' + Backform.helpClassName + '.error').remove();
       return this;
     },
     updateInvalid: function() {
@@ -360,8 +361,8 @@
 
         self.$el
           .addClass(Backform.errorClassName)
-          .find("." + Backform.controlsClassName)
-          .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(", ") : error) + '</span>');
+          .find('.' + Backform.controlsClassName)
+          .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(', ') : error) + '</span>');
 
         handledErrors.push(error);
       });
@@ -417,19 +418,19 @@
       '<div class="<%=Backform.controlsClassName%>">',
       '  <span class="<%=Backform.helpMessageClassName%> help-block"><%=label%></span>',
       '</div>'
-    ].join("\n"))
+    ].join('\n'))
   });
 
   var SpacerControl = Backform.SpacerControl = Control.extend({
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>">&nbsp;</label>',
       '<div class="<%=Backform.controlsClassName%>"></div>'
-    ].join("\n"))
+    ].join('\n'))
   });
 
   var TextareaControl = Backform.TextareaControl = Control.extend({
     defaults: {
-      label: "",
+      label: '',
       maxlength: 4000,
       extraClasses: [],
       helpMessage: null
@@ -442,19 +443,19 @@
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     events: _.extend({}, Control.prototype.events, {
-      "change textarea": "onChange",
-      "focus textarea": "clearInvalid"
+      'change textarea': 'onChange',
+      'focus textarea': 'clearInvalid'
     }),
     getValueFromDOM: function() {
-      return this.formatter.toRaw(this.$el.find("textarea").val(), this.model);
+      return this.formatter.toRaw(this.$el.find('textarea').val(), this.model);
     }
   });
 
   var SelectControl = Backform.SelectControl = Control.extend({
     defaults: {
-      label: "",
+      label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
       helpMessage: null
@@ -472,21 +473,21 @@
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     events: _.extend({}, Control.prototype.events, {
-      "change select": "onChange",
-      "focus select": "clearInvalid"
+      'change select': 'onChange',
+      'focus select': 'clearInvalid'
     }),
     formatter: JSONFormatter,
     getValueFromDOM: function() {
-      return this.formatter.toRaw(this.$el.find("select").val(), this.model);
+      return this.formatter.toRaw(this.$el.find('select').val(), this.model);
     }
   });
 
   // Note: Value here is null or an array. Since jQuery val() returns either.
   var MultiSelectControl = Backform.MultiSelectControl = SelectControl.extend({
     defaults: {
-      label: "",
+      label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
       height: '78px'
@@ -501,18 +502,18 @@
       '    <% } %>',
       '  </select>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     events: _.extend({}, Control.prototype.events, {
-      "change select": "onChange",
-      "dblclick select": "onDoubleClick",
-      "focus select": "clearInvalid"
+      'change select': 'onChange',
+      'dblclick select': 'onDoubleClick',
+      'focus select': 'clearInvalid'
     }),
     formatter: {
       fromRaw: function(rawData, model) {
         return rawData;
       },
       toRaw: function(formattedData, model) {
-        return typeof formattedData == "object" ? formattedData : JSON.parse(formattedData);
+        return typeof formattedData == 'object' ? formattedData : JSON.parse(formattedData);
       }
     },
     onDoubleClick: function(e) {
@@ -522,8 +523,8 @@
 
   var InputControl = Backform.InputControl = Control.extend({
     defaults: {
-      type: "text",
-      label: "",
+      type: 'text',
+      label: '',
       maxlength: 255,
       extraClasses: [],
       helpMessage: null
@@ -536,10 +537,10 @@
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     events: _.extend({}, Control.prototype.events, {
-      "change input": "onChange",
-      "focus input": "clearInvalid"
+      'change input': 'onChange',
+      'focus input': 'clearInvalid'
     }),
     initialize: function(options) {
       if (typeof options == "object" && options.field && options.field.get("type") == "number") {
@@ -548,14 +549,14 @@
       Control.prototype.initialize.apply(this, arguments);
     },
     getValueFromDOM: function() {
-      return this.formatter.toRaw(this.$el.find("input").val(), this.model);
+      return this.formatter.toRaw(this.$el.find('input').val(), this.model);
     }
   });
 
   var BooleanControl = Backform.BooleanControl = InputControl.extend({
     defaults: {
-      type: "checkbox",
-      label: "",
+      type: 'checkbox',
+      label: '',
       controlLabel: '&nbsp;',
       extraClasses: []
     },
@@ -568,9 +569,9 @@
       '    </label>',
       '  </div>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     getValueFromDOM: function() {
-      return this.formatter.toRaw(this.$el.find("input").is(":checked"), this.model);
+      return this.formatter.toRaw(this.$el.find('input').is(':checked'), this.model);
     }
   });
 
@@ -578,8 +579,8 @@
 
   var RadioControl = Backform.RadioControl = InputControl.extend({
     defaults: {
-      type: "radio",
-      label: "",
+      type: 'radio',
+      label: '',
       options: [],
       extraClasses: [],
       helpMessage: null
@@ -597,48 +598,106 @@
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     formatter: JSONFormatter,
     getValueFromDOM: function() {
-      return this.formatter.toRaw(this.$el.find("input:checked").val(), this.model);
+      return this.formatter.toRaw(this.$el.find('input:checked').val(), this.model);
     },
     bootstrap2: function() {
-      Backform.radioControlsClassName = "controls";
-      Backform.radioLabelClassName = "radio inline";
+      Backform.radioControlsClassName = 'controls';
+      Backform.radioLabelClassName = 'radio inline';
     }
   });
   _.extend(Backform, {
-    radioControlsClassName: "radio",
-    radioLabelClassName: "radio-inline"
+    radioControlsClassName: 'radio',
+    radioLabelClassName: 'radio-inline'
   });
 
   // Requires the Bootstrap Datepicker to work.
   var DatepickerControl = Backform.DatepickerControl = InputControl.extend({
     defaults: {
-      type: "text",
-      label: "",
+      type: 'text',
+      label: '',
       options: {},
       extraClasses: [],
       maxlength: 255,
       helpMessage: null
     },
     events: _.extend({}, Control.prototype.events, {
-      "blur input": "onChange",
-      "change input": "onChange",
-      "changeDate input": "onChange",
-      "focus input": "clearInvalid"
+      'blur input': 'onChange',
+      'change input': 'onChange',
+      'changeDate input': 'onChange',
+      'focus input': 'clearInvalid'
     }),
     render: function() {
       InputControl.prototype.render.apply(this, arguments);
-      this.$el.find("input").datepicker(this.field.get("options"));
+      this.$el.find('input').datepicker(this.field.get('options'));
       return this;
+    }
+  });
+
+  // Requires Bootstrap and Moment.js to work (optional font-awesome icons unless overridden)
+  var DateTimePickerControl = Backform.DateTimePickerControl = InputControl.extend({
+    defaults: {
+      type: 'text',
+      label: '',
+      pickerOptions: {
+        format: 'YYYY-MM-DD',
+        icons: {
+          previous: 'fa fa-arrow-left',
+          next: 'fa fa-arrow-right',
+          clear: 'fa fa-trash-o',
+          time: 'fa fa-clock-o',
+          today: 'fa fa-crosshairs',
+          date: 'fa fa-calendar',
+          up: 'fa fa-arrow-up',
+          down: 'fa fa-arrow-down',
+          close: 'fa fa-times'
+        }
+      },
+      serverDateTimeFormat: 'YYYY-MM-DD[T]HH:mm:ss',
+      extraClasses: [],
+      helpMessage: null
+    },
+    template: _.template([
+      '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
+      '<div class="<%=Backform.controlsClassName%>" style="position: relative;">',
+      '  <input type="<%=type%>" class="datetimepicker <%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> />',
+      '  <% if (helpMessage && helpMessage.length) { %>',
+      '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
+      '  <% } %>',
+      '</div>'
+    ].join('\n')),
+    events: {
+      'dp.change': 'onChange',
+      'focus input': 'clearInvalid'
+    },
+    initialize: function(options) {
+      InputControl.prototype.initialize.apply(this, arguments);
+      this.pickerOptions = _.defaults(options.field.get('pickerOptions') || {}, this.defaults.pickerOptions);
+      this.serverDateTimeFormat = options.field.get('serverDateTimeFormat') || this.defaults.serverDateTimeFormat;
+    },
+    render: function() {
+      InputControl.prototype.render.apply(this, arguments);
+      this.$el.find('input.datetimepicker').datetimepicker(this.pickerOptions);
+      return this;
+    },
+    onChange: function() {
+      if (typeof this.$el.find('input').data('DateTimePicker') === 'object')
+        InputControl.prototype.onChange.apply(this, arguments);
+
+      return;
+    },
+    getValueFromDOM: function() {
+      var dateInput = this.$el.find('input').data('DateTimePicker').date();
+      return this.formatter.toRaw(_.isEmpty(dateInput) ? null : dateInput.format(this.serverDateTimeFormat), this.model);
     }
   });
 
   var ButtonControl = Backform.ButtonControl = Control.extend({
     defaults: {
-      type: "submit",
-      label: "Submit",
+      type: 'submit',
+      label: 'Submit',
       status: undefined, // error or success
       message: undefined,
       extraClasses: []
@@ -650,20 +709,20 @@
       '  <% var cls = ""; if (status == "error") cls = Backform.buttonStatusErrorClassName; if (status == "success") cls = Backform.buttonStatusSuccessClassname; %>',
       '  <span class="status <%=cls%>"><%=message%></span>',
       '</div>'
-    ].join("\n")),
+    ].join('\n')),
     initialize: function() {
       Control.prototype.initialize.apply(this, arguments);
-      this.listenTo(this.field, "change:status", this.render);
-      this.listenTo(this.field, "change:message", this.render);
+      this.listenTo(this.field, 'change:status', this.render);
+      this.listenTo(this.field, 'change:message', this.render);
     },
     bootstrap2: function() {
-      Backform.buttonStatusErrorClassName = "text-error";
-      Backform.buttonStatusSuccessClassname = "text-success";
+      Backform.buttonStatusErrorClassName = 'text-error';
+      Backform.buttonStatusSuccessClassname = 'text-success';
     }
   });
   _.extend(Backform, {
-    buttonStatusErrorClassName: "text-danger",
-    buttonStatusSuccessClassname: "text-success"
+    buttonStatusErrorClassName: 'text-danger',
+    buttonStatusSuccessClassname: 'text-success'
   });
 
   return Backform;
