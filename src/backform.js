@@ -700,6 +700,7 @@
       label: 'Submit',
       status: undefined, // error or success
       message: undefined,
+      helpMessage: undefined,
       extraClasses: []
     },
     template: _.template([
@@ -708,6 +709,9 @@
       '  <button type="<%=type%>" name="<%=name%>" class="btn <%=extraClasses.join(\' \')%>" <%=disabled ? "disabled" : ""%> ><%=label%></button>',
       '  <% var cls = ""; if (status == "error") cls = Backform.buttonStatusErrorClassName; if (status == "success") cls = Backform.buttonStatusSuccessClassname; %>',
       '  <span class="status <%=cls%>"><%=message%></span>',
+      '  <% if (helpMessage && helpMessage.length) { %>',
+      '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
+      '  <% } %>',
       '</div>'
     ].join('\n')),
     initialize: function() {
