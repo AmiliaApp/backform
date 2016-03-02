@@ -729,6 +729,9 @@
     buttonStatusSuccessClassname: 'text-success'
   });
 
+  if (typeof module !== 'undefined' && module.exports) {
+			exports = module.exports = Backform;
+		}
   return Backform;
 
 }));
