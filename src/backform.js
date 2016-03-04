@@ -151,7 +151,7 @@
        @param {Backbone.Model} model Used for more complicated formatting
        @return {*}
     */
-    fromRaw: function (rawData, model) {
+    fromRaw: function(rawData, model) {
       return rawData;
     },
 
@@ -167,7 +167,7 @@
        @param {Backbone.Model} model Used for more complicated formatting
        @return {*|undefined}
     */
-    toRaw: function (formattedData, model) {
+    toRaw: function(formattedData, model) {
       return formattedData;
     }
 
@@ -314,7 +314,7 @@
       // Evaluate the disabled, visible, and required option
       _.extend(data, {
         disabled: evalF(data.disabled, this.model),
-        visible:  evalF(data.visible, this.model),
+        visible: evalF(data.visible, this.model),
         required: evalF(data.required, this.model)
       });
 
@@ -325,7 +325,7 @@
         this.$el.addClass(Backform.hiddenClassName);
       }
 
-      if(Backform.requiredInputClassName) {
+      if (Backform.requiredInputClassName) {
         this.$el.removeClass(Backform.requiredInputClassName);
       }
 
@@ -399,7 +399,7 @@
           } else {
             $nextFocus = !!$target.nextAll(':input:visible').length ?
                          $target.nextAll(':input:visible').first() :
-                         $target.closest('.' + Backform.groupClassName.split(' ')[0] + ':visible').prev('.' + Backform.groupClassName.split(' ')[0] + ':visible').find(':input:visible');
+                         $target.closest('.' + Backform.groupClassName.split(' ')[0] + ':visible').next('.' + Backform.groupClassName.split(' ')[0] + ':visible').find(':input:visible');
           }
 
           if ($nextFocus.length) $nextFocus.first().focus();
@@ -469,7 +469,7 @@
       '      <option value="<%-formatter.fromRaw(option.value)%>" <%=option.value === rawValue ? "selected=\'selected\'" : ""%> <%=option.disabled ? "disabled=\'disabled\'" : ""%>><%-option.label%></option>',
       '    <% } %>',
       '  </select>',
-	  '  <% if (helpMessage && helpMessage.length) { %>',
+      '  <% if (helpMessage && helpMessage.length) { %>',
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
       '</div>'
@@ -543,7 +543,7 @@
       'focus input': 'clearInvalid'
     }),
     initialize: function(options) {
-      if (typeof options == "object" && options.field && options.field.get("type") == "number") {
+      if (typeof options == 'object' && options.field && options.field.get('type') == 'number') {
         this.formatter = JSONFormatter;
       }
       Control.prototype.initialize.apply(this, arguments);
@@ -587,7 +587,7 @@
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
-      '<div class="<%=Backform.controlsClassName%> <%=Backform.radioControlsClassName%>">',
+      '<div class="<%=Backform.controlsClassName%>">',
       '  <% for (var i=0; i < options.length; i++) { %>',
       '    <% var option = options[i]; %>',
       '    <label class="<%=Backform.radioLabelClassName%>">',
@@ -604,12 +604,10 @@
       return this.formatter.toRaw(this.$el.find('input:checked').val(), this.model);
     },
     bootstrap2: function() {
-      Backform.radioControlsClassName = 'controls';
       Backform.radioLabelClassName = 'radio inline';
     }
   });
   _.extend(Backform, {
-    radioControlsClassName: 'radio',
     radioLabelClassName: 'radio-inline'
   });
 
@@ -637,7 +635,7 @@
   });
 
   // Requires Bootstrap and Moment.js to work (optional font-awesome icons unless overridden)
-  var DateTimePickerControl = Backform.DateTimePickerControl = InputControl.extend({
+  var DatetimepickerControl = Backform.DatetimepickerControl = InputControl.extend({
     defaults: {
       type: 'text',
       label: '',
