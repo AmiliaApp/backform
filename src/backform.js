@@ -604,10 +604,12 @@
       return this.formatter.toRaw(this.$el.find('input:checked').val(), this.model);
     },
     bootstrap2: function() {
+      Backform.radioControlsClassName = '';
       Backform.radioLabelClassName = 'radio inline';
     }
   });
   _.extend(Backform, {
+    radioControlsClassName: "radio",
     radioLabelClassName: 'radio-inline'
   });
 
