@@ -247,6 +247,7 @@
     initialize: function(options) {
       // Back-reference to the field
       this.field = options.field;
+      this.showAsterisk = options.showAsterisk;
 
       var formatter = Backform.resolveNameToClass(this.field.get('formatter') || this.formatter, 'Formatter');
       if (!_.isFunction(formatter.fromRaw) && !_.isFunction(formatter.toRaw)) {
