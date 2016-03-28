@@ -90,6 +90,7 @@
       this.fields = options.fields;
       this.model.errorModel = options.errorModel || this.model.errorModel || new Backbone.Model();
       this.controls = [];
+      this.showRequiredAsAsterisk = options.showRequiredAsAsterisk;
     },
     cleanup: function() {
       _.each(this.controls, function(c) {
@@ -116,7 +117,11 @@
           field: field,
           model: model
         });
-        $form.append(control.render().$el);
+        var $control = control.render().$el;
+        if(form.showRequiredAsAsterisk && control.field.get('required')) {
+          $control.find('label.' + Backform.controlLabelClassName).append(" *");
+        }
+        $form.append($control);
         controls.push(control);
       });
 
