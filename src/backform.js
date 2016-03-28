@@ -115,13 +115,10 @@
       this.fields.each(function(field) {
         var control = new (field.get('control'))({
           field: field,
-          model: model
+          model: model,
+          showAsterisk: form.showRequiredAsAsterisk && field.get('required')
         });
-        var $control = control.render().$el;
-        if (form.showRequiredAsAsterisk && control.field.get('required')) {
-          $control.find('label.' + Backform.controlLabelClassName).append(' *');
-        }
-        $form.append($control);
+        $form.append(control.render().$el);
         controls.push(control);
       });
 
@@ -339,6 +336,9 @@
       }
 
       this.$el.html(this.template(data)).addClass(field.name);
+      if (this.showAsterisk) {
+        this.$el.find('label.' + Backform.controlLabelClassName).append(' *');
+      }
       this.updateInvalid();
 
       return this;
