@@ -118,8 +118,8 @@
           model: model
         });
         var $control = control.render().$el;
-        if(form.showRequiredAsAsterisk && control.field.get('required')) {
-          $control.find('label.' + Backform.controlLabelClassName).append(" *");
+        if (form.showRequiredAsAsterisk && control.field.get('required')) {
+          $control.find('label.' + Backform.controlLabelClassName).append(' *');
         }
         $form.append($control);
         controls.push(control);
