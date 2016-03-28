@@ -81,6 +81,7 @@
     fields: undefined,
     errorModel: undefined,
     tagName: 'form',
+    showRequiredAsAsterisk: false,
     className: function() {
       return Backform.formClassName;
     },
@@ -90,6 +91,10 @@
       this.fields = options.fields;
       this.model.errorModel = options.errorModel || this.model.errorModel || new Backbone.Model();
       this.controls = [];
+      
+      if(options.showRequiredAsAsterisk) {
+        this.showRequiredAsAsterisk = options.showRequiredAsAsterisk;
+      }
     },
     cleanup: function() {
       _.each(this.controls, function(c) {
@@ -116,6 +121,10 @@
           field: field,
           model: model
         });
+        if (form.showRequiredAsAsterisk && control.field.get('required')) {
+          var label = control.field.get('label');
+          control.field.set('label', label + " *");
+        }
         $form.append(control.render().$el);
         controls.push(control);
       });
