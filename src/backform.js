@@ -297,6 +297,11 @@
       model.set(changes);
       this.listenTo(this.model, 'change:' + name, this.render);
     },
+    addAsterisk: function() {
+      if (this.showAsterisk) {
+        this.$el.find('label.' + Backform.controlLabelClassName).append(' *');
+      }
+    },
     render: function() {
       var field = _.defaults(this.field.toJSON(), this.defaults),
           attributes = this.model.toJSON(),
@@ -337,9 +342,7 @@
       }
 
       this.$el.html(this.template(data)).addClass(field.name);
-      if (this.showAsterisk) {
-        this.$el.find('label.' + Backform.controlLabelClassName).append(' *');
-      }
+      this.addAsterisk();
       this.updateInvalid();
 
       return this;
