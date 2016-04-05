@@ -384,7 +384,11 @@
       for (var i = 0; i < path.length; i++) {
         if (_.isNull(res)) return null;
         if (_.isEmpty(path[i])) continue;
-        if (!_.isUndefined(res[path[i]])) res = res[path[i]];
+        if (!_.isUndefined(res[path[i]])) {
+          res = res[path[i]];
+        } else {
+          return null;
+        }
       }
       return _.isObject(res) && !_.isArray(res) ? null : res;
     },
