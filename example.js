@@ -268,4 +268,80 @@ $(document).ready(function() {
     return false;
   });
 
+  // Example with custom markup
+  var custommarkup = new Backbone.Model({
+    id: 101,
+    salutation: "Mr",
+    firstName: "Andre",
+    lastName: "Jones",
+    adult: true,
+    address: {
+    address1: "1751 rue Richardson",
+    address2: "Suite 3.105",
+    city: "Montréal",
+    postalCode: "H3K 1G6",
+    lifeGoal: "To become the best basketball player there is. I want to dunk!",
+    province: "QC"
+    }
+  });
+
+  new Backform.Form({
+    el: "#custom-markup",
+    model: custommarkup,
+    fields: [
+    {name: "id", label: "Id", control: "uneditable-input"},
+    {name: "firstName", label: "First Name", control: "input"},
+    {name: "lastName", label: "Last Name", control: "input"},
+    {name: "lifeGoal", label: "Life goal", control: "textarea", extraClasses: ["fancy"], helpMessage: "Be creative!"},
+    {name: "adult", label: "Adult", control: "checkbox"},
+    {
+      name: "salutation",
+      label: "Salutation",
+      control: "radio",
+      options: [
+      {label: "Mr.", value: "Mr"},
+      {label: "Mrs.", value: "Mrs"},
+      {label: "Mme.", value: "Mme"}
+      ]
+    },
+    {name: "address.address1", label: "Address1", control: "input"},
+    {name: "address.address2", label: "Address2", control: "input"},
+    {name: "address.city", label: "City", control: "input"},
+    {name: "address.postalCode", label: "Postal Code", control: "input"},
+    {
+      name: "address.province",
+      label: "Province",
+      control: "select",
+      options: [
+      {label: "Alberta", value: "AB"},
+      {label: "British Columbia", value: "BC"},
+      {label: "Manitoba", value: "MB"},
+      {label: "New Brunswick", value: "NB"},
+      {label: "Newfoundland and Labrador", value: "NL"},
+      {label: "Northwest Territories", value: "NT"},
+      {label: "Nova Scotia", value: "NS"},
+      {label: "Nunavut", value: "NU"},
+      {label: "Ontario", value: "ON"},
+      {label: "Prince Edward Island", value: "PE"},
+      {label: "Québec", value: "QC"},
+      {label: "Saskatchewan", value: "SK"},
+      {label: "Yukon", value: "YT"}
+      ]
+    },
+    {control: "button", label: "Save to server"}
+    ],
+    events: {
+      "submit": function(e) {
+        e.preventDefault();
+        this.model.save().done(function(result) {
+        alert("Form saved to server!");
+        });
+        return false;
+      }
+    }
+  }).render();
+
+  custommarkup.on("change", function() {
+    $("#custommarkup").text(JSON.stringify(custommarkup.toJSON(), null, 2));
+  }).trigger("change");
 });

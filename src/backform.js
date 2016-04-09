@@ -105,12 +105,17 @@
     },
     render: function() {
       this.cleanup();
-      this.$el.empty();
 
       var form = this,
           $form = this.$el,
           model = this.model,
           controls = this.controls;
+
+      // if data-field available don't empty template to keep custom layout
+      // make sure you take care yourself to set the correct template with "el" option
+      if ( !$form.find('*[data-field]').length ) {
+        this.$el.empty();
+      }
 
       this.fields.each(function(field) {
         var control = new (field.get('control'))({
@@ -118,7 +123,16 @@
           model: model,
           showAsterisk: form.showRequiredAsAsterisk && field.get('required')
         });
-        $form.append(control.render().$el);
+
+        var $tplField = $form.find('*[data-field="' + field.attributes.name + '"]');
+        if ( $tplField.length ) {
+          // found => append to found element
+          $tplField.append(control.render().$el);
+        }
+        else {
+          // append to form
+          $form.append(control.render().$el);
+        }
         controls.push(control);
       });
 
