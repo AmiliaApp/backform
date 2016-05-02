@@ -299,7 +299,7 @@
     },
     renderAsteriskIfRequired: function() {
       if (this.showAsterisk) {
-        this.$el.find('label.' + Backform.controlLabelClassName).append(' *');
+        this.$el.find('label.' + Backform.controlLabelClassName.replace(" ", ".")).append(' *');
       }
     },
     render: function() {
