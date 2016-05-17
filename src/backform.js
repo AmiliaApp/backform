@@ -503,7 +503,8 @@
       label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
-      height: '78px'
+      height: '78px',
+      helpMessage: null
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
@@ -514,6 +515,9 @@
       '      <option value="<%-option.value%>" <%=value != null && _.indexOf(value, option.value) != -1 ? "selected=\'selected\'" : ""%> <%=option.disabled ? "disabled=\'disabled\'" : ""%>><%-option.label%></option>',
       '    <% } %>',
       '  </select>',
+	  '  <% if (helpMessage && helpMessage.length) { %>',
+      '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
+      '  <% } %>',
       '</div>'
     ].join('\n')),
     events: _.extend({}, Control.prototype.events, {
@@ -571,7 +575,8 @@
       type: 'checkbox',
       label: '',
       controlLabel: '&nbsp;',
-      extraClasses: []
+      extraClasses: [],
+      helpMessage: null
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=controlLabel%></label>',
@@ -580,6 +585,9 @@
       '    <label>',
       '      <input type="<%=type%>" class="<%=extraClasses.join(\' \')%>" name="<%=name%>" <%=value ? "checked=\'checked\'" : ""%> <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> /> <%=label%>',
       '    </label>',
+	  '    <% if (helpMessage && helpMessage.length) { %>',
+      '      <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
+      '    <% } %>',
       '  </div>',
       '</div>'
     ].join('\n')),
