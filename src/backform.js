@@ -290,7 +290,7 @@
         }
       }
 
-      changes[name] = _.isEmpty(path) ? value : _.clone(model.get(name)) || {};
+      changes[name] = _.isEmpty(path) ? value : $.extend(true, {}, model.get(name)) || {};
 
       if (!_.isEmpty(path)) this.keyPathSetter(changes[name], path, value);
       this.stopListening(this.model, 'change:' + name, this.render);
