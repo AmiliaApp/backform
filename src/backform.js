@@ -593,6 +593,11 @@
     ].join('\n')),
     getValueFromDOM: function() {
       return this.formatter.toRaw(this.$el.find('input').is(':checked'), this.model);
+    },
+    renderAsteriskIfRequired: function() {
+      if (this.showAsterisk) {
+        this.$el.find('.checkbox label').append(' *');
+      }
     }
   });
 
