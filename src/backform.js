@@ -299,7 +299,7 @@
     },
     renderAsteriskIfRequired: function() {
       if (this.showAsterisk) {
-        this.$el.find('label').append(' *');
+        this.$el.find('.control-label').append(' *');
       }
     },
     render: function() {
