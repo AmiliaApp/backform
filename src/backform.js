@@ -655,6 +655,12 @@
       'changeDate input': 'onChange',
       'focus input': 'clearInvalid'
     }),
+    onChange : function(e) {
+      if($(e.target).val() !==  this.model.get(this.field.get('name'))){
+        InputControl.prototype.onChange.apply(this, arguments);
+      }
+      return;
+    },
     render: function() {
       InputControl.prototype.render.apply(this, arguments);
       this.$el.find('input').datepicker(this.field.get('options'));
