@@ -182,7 +182,11 @@
       return JSON.stringify(rawData);
     },
     toRaw: function(formattedData, model) {
-      return JSON.parse(formattedData);
+      var json = undefined;
+      try {
+        json = JSON.parse(formattedData);
+      } catch(error) {}
+      return json;
     }
   });
 
