@@ -38,6 +38,7 @@
     controlClassName: 'form-control',
     helpClassName: 'help-block',
     errorClassName: 'has-error',
+	errorDetailsClassName: 'errors-details',
     helpMessageClassName: 'help-block',
     hiddenClassName: 'hidden',
     requiredInputClassName: undefined,
@@ -354,29 +355,60 @@
     },
     updateInvalid: function() {
       var self = this,
-          errorModel = this.model.errorModel,
-          handledErrors = [];
+        errorModel = this.model.errorModel,
+        handledErrors = [];
       if (!(errorModel instanceof Backbone.Model)) return this;
 
       this.clearInvalid();
 
-      this.$el.find(':input').not('button').each(function(ix, el) {
-        var attrArr = $(el).attr('name').split('.'),
-          name = attrArr.shift(),
-          path = attrArr.join('.'),
-          error = self.keyPathAccessor(errorModel.toJSON(), $(el).attr('name'));
+      this.$el.find(':input').not('button').each($.proxy(function(ix, el) {
+		var error = self.keyPathAccessor(errorModel.toJSON(), $(el).attr('name'));
 
         if (_.isEmpty(error) || _.indexOf(handledErrors, error) >= 0) return;
 
         self.$el
           .addClass(Backform.errorClassName)
           .find('.' + Backform.controlsClassName)
-          .append('<span class="' + Backform.helpClassName + ' error">' + (_.isArray(error) ? error.join(', ') : error) + '</span>');
+          .append('<span class="' + Backform.helpClassName + ' error">' + this.getErrorAsHtml(error) + '</span>')
+		  .find('.' + Backform.errorDetailsClassName + ' [data-toggle="popover"]').popover();
 
         handledErrors.push(error);
-      });
+      }, this));
 
       return this;
+    },
+	/**
+     * Return an error as HTML
+     * @param {string|string[]|{Errors: string|string[], Details: string, DetailsLabel: string}} error The error to convert as HTML
+     * Expected formats:
+     * - String
+     * - Array of string
+     * - Object with:
+     *   - [required] Errors (string or array of string) List of errors
+     *   - [optional] Details (HTML string) Details to display in a popover
+     *   - [optional] DetailsLabel (string) Text of the link to open the details popover. Default to "?"
+     * @returns {string}
+     */
+    getErrorAsHtml: function(error) {
+      var template = _.template([
+        '<% if (_.isObject(error) && !_.isUndefined(error.Errors)) { %>',
+        '  <% if (error.Errors) { %>',
+        '    <%= error.Errors.join(\', \') %>',
+        '  <% } %>',
+        '  <% if (!_.isUndefined(error.Details) && $.trim(error.Details)) { %>',
+        '    <div class="<%- Backform.errorDetailsClassName %>">',
+        '      <button type="button" class="btn btn-link btn-xs" data-html="true" data-toggle="popover" data-placement="bottom" data-content="<%- $.trim(error.Details) %>">',
+        '        <%= error.DetailsLabel || \'?\' %>',
+        '      </button>',
+        '    </div>',
+        '  <% } %>',
+        '<% } else if (!_.isObject(error) || _.isArray(error)) { %>',
+        '  <% error = _.isArray(error) ? error : [error]; %>',
+        '  <%= error.join(\', \') %>',
+        '<% } %>'
+      ].join('\n'));
+
+      return template({ error: error });
     },
     keyPathAccessor: function(obj, path) {
       var res = obj;
@@ -390,7 +422,7 @@
           return null;
         }
       }
-      return _.isObject(res) && !_.isArray(res) ? null : res;
+      return res;
     },
     keyPathSetter: function(obj, path, value) {
       path = path.split('.');
