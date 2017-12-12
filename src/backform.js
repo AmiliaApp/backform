@@ -466,6 +466,15 @@
     ].join('\n'))
   });
 
+  var TextOnlyControl = Backform.TextOnlyControl = Control.extend({
+    template: _.template([
+      '<label class="<%=Backform.controlLabelClassName%>"><%=controlLabel%></label>',
+      '<div class="<%=Backform.controlsClassName%>">',
+      '  <span class="<%=Backform.helpMessageClassName%> help-block"><%=label%></span>',
+      '</div>'
+    ].join('\n'))
+  });
+
   var SpacerControl = Backform.SpacerControl = Control.extend({
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>">&nbsp;</label>',
