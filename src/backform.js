@@ -25,7 +25,7 @@
   } else {
     factory(root, root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Backbone);
   }
-} (this, function(root, _, $, Backbone) {
+}(this, function(root, _, $, Backbone) {
 
   // Backform namespace and global options
   Backform = root.Backform = {
@@ -184,8 +184,8 @@
     },
     toRaw: function(formattedData, model) {
       /* JSON.parse fails on empty data */
-      if(formattedData === "") {
-        return "";
+      if (formattedData === '') {
+        return '';
       }
       return JSON.parse(formattedData);
     }
@@ -266,6 +266,10 @@
       // Listen to the field in the model for any change
       this.listenTo(this.model, 'change:' + name, this.render);
 
+      if (_.isUndefined(this.field.get('label'))) {
+        this.field.set('label', '');
+      }
+
       // Listen for the field in the error model for any change
       if (this.model.errorModel instanceof Backbone.Model)
         this.listenTo(this.model.errorModel, 'change:' + name, this.updateInvalid);
@@ -274,7 +278,7 @@
     getValueFromDOM: function() {
       return this.formatter.toRaw(this.$el.find('.uneditable-input').text(), this.model);
     },
-    onChange: function(e) {
+    onChange: function(e, options) {
       var model = this.model,
           $el = $(e.target),
           attrArr = this.field.get('name').split('.'),
@@ -299,7 +303,7 @@
 
       if (!_.isEmpty(path)) this.keyPathSetter(changes[name], path, value);
       this.stopListening(this.model, 'change:' + name, this.render);
-      model.set(changes);
+      model.set(changes, options);
       this.listenTo(this.model, 'change:' + name, this.render);
     },
     renderAsteriskIfRequired: function() {
@@ -491,12 +495,13 @@
       label: '',
       maxlength: 4000,
       extraClasses: [],
-      helpMessage: null
+      helpMessage: null,
+      rows: 3
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
-      '  <textarea class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" maxlength="<%=maxlength%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%>><%-value%></textarea>',
+      '  <textarea class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" maxlength="<%=maxlength%>" rows="<%=rows%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%>><%-value%></textarea>',
       '  <% if (helpMessage && helpMessage.length) { %>',
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
@@ -516,12 +521,13 @@
       label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
+      multiple: false,
       helpMessage: null
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
-      '  <select class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> >',
+      '  <select class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> <%=multiple ? "multiple" : ""%> >',
       '    <% for (var i=0; i < options.length; i++) { %>',
       '      <% var option = options[i]; %>',
       '      <option value="<%-formatter.fromRaw(option.value)%>" <%=option.value === rawValue ? "selected=\'selected\'" : ""%> <%=option.disabled ? "disabled=\'disabled\'" : ""%>><%-option.label%></option>',
@@ -795,6 +801,67 @@
       Backform.buttonStatusSuccessClassname = 'text-success';
     }
   });
+
+  Backform.MultiCheckboxControl = Backform.CheckboxControl.extend({
+    defaults: {
+      type: 'checkbox',
+      columns: 1,
+      containerClass: 'col-md-6',
+      columnClass: 'col-md-',
+      rowClass: 'row'
+    },
+    template: _.template([
+      '<label class="<%=Backform.controlLabelClassName%>">',
+      '  <%=label%>',
+      '</label>',
+      '<div class="<%=Backform.controlsClassName%>">',
+      '  <div class="<%=rowClass%>">',
+      '    <% for (var i=0; i < options.length; i++) { %>',
+      '      <% var option = options[i]; %>',
+      '      <div class="<%=columnClass%><%=12 / columns%>">',
+      '        <div class="checkbox">',
+      '          <label>',
+      '            <input type="<%=type%>" name="<%=name%>" value="<%=option.value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> /> <%-option.label%>',
+      '          </label>',
+      '        </div>',
+      '      </div>',
+      '      <% if ((i + 1) % columns == 0) { %>',
+      '        </div>',
+      '        <div class="<%=rowClass%>">',
+      '      <% } %>',
+      '    <% } %>',
+      '  </div>',
+      '</div>'
+    ].join('\n')),
+    bootstrap2: function() {
+      this.defaults.columnClass = 'span';
+      this.defaults.containerClass = 'span6 offset3';
+      this.defaults.rowClass = 'row-fluid';
+    },
+    render: function() {
+      Backform.CheckboxControl.prototype.render.apply(this, arguments);
+
+      var values = this.model.get(this.field.get('name'));
+
+      this.$el.find('input').each(function() {
+        if (_.indexOf(values, $(this).val()) > -1) {
+          $(this).prop('checked', true);
+        }
+      });
+
+      return this;
+    },
+    getValueFromDOM: function() {
+      var arr = [];
+
+      this.$el.find('input:checked').each(function() {
+        arr.push($(this).val());
+      });
+
+      return arr;
+    }
+  });
+
   _.extend(Backform, {
     buttonStatusErrorClassName: 'text-danger',
     buttonStatusSuccessClassname: 'text-success'
