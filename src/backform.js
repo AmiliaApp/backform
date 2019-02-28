@@ -183,6 +183,10 @@
       return JSON.stringify(rawData);
     },
     toRaw: function(formattedData, model) {
+      /* JSON.parse fails on empty data */
+      if(formattedData === "") {
+        return "";
+      }
       return JSON.parse(formattedData);
     }
   });
