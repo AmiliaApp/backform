@@ -6,11 +6,11 @@
   Written by Martin Drapeau
   Licensed under the MIT @license
  */
-(function(root, factory) {
+(function (root, factory) {
 
   // Set up Backform appropriately for the environment. Start with AMD.
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'backbone'], function(_, $, Backbone) {
+    define(['underscore', 'jquery', 'backbone'], function (_, $, Backbone) {
       // Export global even in AMD case in case this script is loaded with
       // others that may still expect a global Backform.
       return factory(root, _, $, Backbone);
@@ -25,7 +25,7 @@
   } else {
     factory(root, root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Backbone);
   }
-} (this, function(root, _, $, Backbone) {
+}(this, function (root, _, $, Backbone) {
 
   // Backform namespace and global options
   Backform = root.Backform = {
@@ -44,7 +44,7 @@
     requiredInputClassName: undefined,
 
     // Bootstrap 2.3 adapter
-    bootstrap2: function() {
+    bootstrap2: function () {
       _.extend(Backform, {
         groupClassName: 'control-group',
         controlLabelClassName: 'control-label',
@@ -54,16 +54,16 @@
         errorClassName: 'error',
         helpMessageClassName: 'help-block help-message small'
       });
-      _.each(Backform, function(value, name) {
+      _.each(Backform, function (value, name) {
         if (_.isFunction(Backform[name]) &&
             _.isFunction(Backform[name].prototype['bootstrap2']))
           Backform[name].prototype['bootstrap2']();
       });
     },
     // https://github.com/wyuenho/backgrid/blob/master/lib/backgrid.js
-    resolveNameToClass: function(name, suffix) {
+    resolveNameToClass: function (name, suffix) {
       if (_.isString(name)) {
-        var key = _.map(name.split('-'), function(e) {
+        var key = _.map(name.split('-'), function (e) {
           return e.slice(0, 1).toUpperCase() + e.slice(1);
         }).join('') + suffix;
         var klass = Backform[key];
@@ -82,10 +82,10 @@
     fields: undefined,
     errorModel: undefined,
     tagName: 'form',
-    className: function() {
+    className: function () {
       return Backform.formClassName;
     },
-    initialize: function(options) {
+    initialize: function (options) {
       if (!(options.fields instanceof Backbone.Collection))
         options.fields = new Fields(options.fields || this.fields);
       this.fields = options.fields;
@@ -93,18 +93,18 @@
       this.controls = [];
       this.showRequiredAsAsterisk = options.showRequiredAsAsterisk;
     },
-    cleanup: function() {
-      _.each(this.controls, function(c) {
+    cleanup: function () {
+      _.each(this.controls, function (c) {
         c.remove();
       });
       this.controls.length = 0;
     },
-    remove: function() {
+    remove: function () {
       /* First do the clean up */
       this.cleanup();
       Backbone.View.prototype.remove.apply(this, arguments);
     },
-    render: function() {
+    render: function () {
       this.cleanup();
       this.$el.empty();
 
@@ -113,7 +113,7 @@
           model = this.model,
           controls = this.controls;
 
-      this.fields.each(function(field) {
+      this.fields.each(function (field) {
         var control = new (field.get('control'))({
           field: field,
           model: model,
@@ -141,7 +141,7 @@
      @class Backform.ControlFormatter
      @constructor
   */
-  var ControlFormatter = Backform.ControlFormatter = function() {};
+  var ControlFormatter = Backform.ControlFormatter = function () {};
   _.extend(ControlFormatter.prototype, {
 
     /**
@@ -154,7 +154,7 @@
        @param {Backbone.Model} model Used for more complicated formatting
        @return {*}
     */
-    fromRaw: function(rawData, model) {
+    fromRaw: function (rawData, model) {
       return rawData;
     },
 
@@ -170,19 +170,22 @@
        @param {Backbone.Model} model Used for more complicated formatting
        @return {*|undefined}
     */
-    toRaw: function(formattedData, model) {
+    toRaw: function (formattedData, model) {
       return formattedData;
     }
 
   });
 
   // Store value in DOM as stringified JSON.
-  var JSONFormatter = Backform.JSONFormatter = function() {};
+  var JSONFormatter = Backform.JSONFormatter = function () {};
   _.extend(JSONFormatter.prototype, {
-    fromRaw: function(rawData, model) {
+    fromRaw: function (rawData, model) {
       return JSON.stringify(rawData);
     },
-    toRaw: function(formattedData, model) {
+    toRaw: function (formattedData, model) {
+      if (formattedData === '') {
+        return '';
+      }
       /* JSON.parse fails on empty data */
       if(formattedData === "") {
         return "";
@@ -221,7 +224,7 @@
       control: undefined,
       formatter: undefined
     },
-    initialize: function(attributes, options) {
+    initialize: function (attributes, options) {
       var control = Backform.resolveNameToClass(this.get('control'), 'Control');
       this.set({control: control}, {silent: true});
     }
@@ -235,7 +238,7 @@
   var Control = Backform.Control = Backbone.View.extend({
     // Additional field defaults
     defaults: {},
-    className: function() {
+    className: function () {
       return Backform.groupClassName;
     },
     events: {
@@ -249,7 +252,7 @@
       '  </span>',
       '</div>'
     ].join('\n')),
-    initialize: function(options) {
+    initialize: function (options) {
       // Back-reference to the field
       this.field = options.field;
       this.showAsterisk = options.showAsterisk;
@@ -266,15 +269,19 @@
       // Listen to the field in the model for any change
       this.listenTo(this.model, 'change:' + name, this.render);
 
+      if (_.isUndefined(this.field.get('label'))) {
+        this.field.set('label', '');
+      }
+
       // Listen for the field in the error model for any change
       if (this.model.errorModel instanceof Backbone.Model)
         this.listenTo(this.model.errorModel, 'change:' + name, this.updateInvalid);
     },
     formatter: ControlFormatter,
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       return this.formatter.toRaw(this.$el.find('.uneditable-input').text(), this.model);
     },
-    onChange: function(e) {
+    onChange: function (e, options) {
       var model = this.model,
           $el = $(e.target),
           attrArr = this.field.get('name').split('.'),
@@ -299,15 +306,15 @@
 
       if (!_.isEmpty(path)) this.keyPathSetter(changes[name], path, value);
       this.stopListening(this.model, 'change:' + name, this.render);
-      model.set(changes);
+      model.set(changes, options);
       this.listenTo(this.model, 'change:' + name, this.render);
     },
-    renderAsteriskIfRequired: function() {
+    renderAsteriskIfRequired: function () {
       if (this.showAsterisk) {
         this.$el.find('.control-label').append(' *');
       }
     },
-    render: function() {
+    render: function () {
       var field = _.defaults(this.field.toJSON(), this.defaults),
           attributes = this.model.toJSON(),
           attrArr = field.name.split('.'),
@@ -320,7 +327,7 @@
             attributes: attributes,
             formatter: this.formatter
           }),
-          evalF = function(f, m) {
+          evalF = function (f, m) {
             return (_.isFunction(f) ? !!f(m) : !!f);
           };
 
@@ -352,12 +359,12 @@
 
       return this;
     },
-    clearInvalid: function() {
+    clearInvalid: function () {
       this.$el.removeClass(Backform.errorClassName)
         .find('.' + Backform.helpClassName + '.error').remove();
       return this;
     },
-    updateInvalid: function() {
+    updateInvalid: function () {
       var self = this,
         errorModel = this.model.errorModel,
         handledErrors = [];
@@ -365,7 +372,7 @@
 
       this.clearInvalid();
 
-      this.$el.find(':input').not('button').each($.proxy(function(ix, el) {
+      this.$el.find(':input').not('button').each($.proxy(function (ix, el) {
 		var error = self.keyPathAccessor(errorModel.toJSON(), $(el).attr('name'));
 
         if (_.isEmpty(error) || _.indexOf(handledErrors, error) >= 0) return;
@@ -393,7 +400,7 @@
      *   - [optional] DetailsLabel (string) Text of the link to open the details popover. Default to "?"
      * @returns {string}
      */
-    getErrorAsHtml: function(error) {
+    getErrorAsHtml: function (error) {
       var template = _.template([
         '<% if (_.isObject(error) && !_.isUndefined(error.Errors)) { %>',
         '  <% if (error.Errors) { %>',
@@ -414,7 +421,7 @@
 
       return template({ error: error });
     },
-    keyPathAccessor: function(obj, path) {
+    keyPathAccessor: function (obj, path) {
       var res = obj;
       path = path.split('.');
       for (var i = 0; i < path.length; i++) {
@@ -428,7 +435,7 @@
       }
       return res;
     },
-    keyPathSetter: function(obj, path, value) {
+    keyPathSetter: function (obj, path, value) {
       path = path.split('.');
       while (path.length > 1) {
         if (!obj[path[0]]) obj[path[0]] = {};
@@ -436,10 +443,10 @@
       }
       return obj[path.shift()] = value;
     },
-    processTab: function(e) {
+    processTab: function (e) {
       if (e.which == 9) {
         var $target = $(e.currentTarget);
-        setTimeout(function() {
+        setTimeout(function () {
           var $nextFocus;
           if (e.shiftKey) {
             $nextFocus = !!$target.prevAll(':input:visible').length ?
@@ -491,12 +498,13 @@
       label: '',
       maxlength: 4000,
       extraClasses: [],
-      helpMessage: null
+      helpMessage: null,
+      rows: 3
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
-      '  <textarea class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" maxlength="<%=maxlength%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%>><%-value%></textarea>',
+      '  <textarea class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" maxlength="<%=maxlength%>" rows="<%=rows%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%>><%-value%></textarea>',
       '  <% if (helpMessage && helpMessage.length) { %>',
       '    <span class="<%=Backform.helpMessageClassName%>"><%=helpMessage%></span>',
       '  <% } %>',
@@ -506,7 +514,7 @@
       'change textarea': 'onChange',
       'focus textarea': 'clearInvalid'
     }),
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       return this.formatter.toRaw(this.$el.find('textarea').val(), this.model);
     }
   });
@@ -516,12 +524,13 @@
       label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
+      multiple: false,
       helpMessage: null
     },
     template: _.template([
       '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
-      '  <select class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> >',
+      '  <select class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> <%=multiple ? "multiple" : ""%> >',
       '    <% for (var i=0; i < options.length; i++) { %>',
       '      <% var option = options[i]; %>',
       '      <option value="<%-formatter.fromRaw(option.value)%>" <%=option.value === rawValue ? "selected=\'selected\'" : ""%> <%=option.disabled ? "disabled=\'disabled\'" : ""%>><%-option.label%></option>',
@@ -537,7 +546,7 @@
       'focus select': 'clearInvalid'
     }),
     formatter: JSONFormatter,
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       return this.formatter.toRaw(this.$el.find('select').val(), this.model);
     }
   });
@@ -571,14 +580,14 @@
       'focus select': 'clearInvalid'
     }),
     formatter: {
-      fromRaw: function(rawData, model) {
+      fromRaw: function (rawData, model) {
         return rawData;
       },
-      toRaw: function(formattedData, model) {
+      toRaw: function (formattedData, model) {
         return typeof formattedData == 'object' ? formattedData : JSON.parse(formattedData);
       }
     },
-    onDoubleClick: function(e) {
+    onDoubleClick: function (e) {
       this.model.trigger('doubleclick', e);
     }
   });
@@ -604,13 +613,13 @@
       'change input': 'onChange',
       'focus input': 'clearInvalid'
     }),
-    initialize: function(options) {
+    initialize: function (options) {
       if (typeof options == 'object' && options.field && options.field.get('type') == 'number') {
         this.formatter = JSONFormatter;
       }
       Control.prototype.initialize.apply(this, arguments);
     },
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       return this.formatter.toRaw(this.$el.find('input').val(), this.model);
     }
   });
@@ -636,10 +645,10 @@
       '  </div>',
       '</div>'
     ].join('\n')),
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       return this.formatter.toRaw(this.$el.find('input').is(':checked'), this.model);
     },
-    renderAsteriskIfRequired: function() {
+    renderAsteriskIfRequired: function () {
       if (this.showAsterisk) {
         this.$el.find('.checkbox label').append(' *');
       }
@@ -671,10 +680,10 @@
       '</div>'
     ].join('\n')),
     formatter: JSONFormatter,
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       return this.formatter.toRaw(this.$el.find('input:checked').val(), this.model);
     },
-    bootstrap2: function() {
+    bootstrap2: function () {
       Backform.radioControlsClassName = '';
       Backform.radioLabelClassName = 'radio inline';
     }
@@ -700,7 +709,7 @@
       'changeDate input': 'onChange',
       'focus input': 'clearInvalid'
     }),
-    render: function() {
+    render: function () {
       InputControl.prototype.render.apply(this, arguments);
       this.$el.find('input').datepicker(this.field.get('options'));
       return this;
@@ -743,23 +752,23 @@
       'dp.change': 'onChange',
       'focus input': 'clearInvalid'
     },
-    initialize: function(options) {
+    initialize: function (options) {
       InputControl.prototype.initialize.apply(this, arguments);
       this.pickerOptions = _.defaults(options.field.get('pickerOptions') || {}, this.defaults.pickerOptions);
       this.serverDateTimeFormat = options.field.get('serverDateTimeFormat') || this.defaults.serverDateTimeFormat;
     },
-    render: function() {
+    render: function () {
       InputControl.prototype.render.apply(this, arguments);
       this.$el.find('input.datetimepicker').datetimepicker(this.pickerOptions);
       return this;
     },
-    onChange: function() {
+    onChange: function () {
       if (typeof this.$el.find('input').data('DateTimePicker') === 'object')
         InputControl.prototype.onChange.apply(this, arguments);
 
       return;
     },
-    getValueFromDOM: function() {
+    getValueFromDOM: function () {
       var dateInput = this.$el.find('input').data('DateTimePicker').date();
       return this.formatter.toRaw(_.isEmpty(dateInput) ? null : dateInput.format(this.serverDateTimeFormat), this.model);
     }
@@ -785,16 +794,77 @@
       '  <% } %>',
       '</div>'
     ].join('\n')),
-    initialize: function() {
+    initialize: function () {
       Control.prototype.initialize.apply(this, arguments);
       this.listenTo(this.field, 'change:status', this.render);
       this.listenTo(this.field, 'change:message', this.render);
     },
-    bootstrap2: function() {
+    bootstrap2: function () {
       Backform.buttonStatusErrorClassName = 'text-error';
       Backform.buttonStatusSuccessClassname = 'text-success';
     }
   });
+
+  Backform.MultiCheckboxControl = Backform.CheckboxControl.extend({
+    defaults: {
+      type: 'checkbox',
+      columns: 1,
+      containerClass: 'col-md-6',
+      columnClass: 'col-md-',
+      rowClass: 'row'
+    },
+    template: _.template([
+      '<label class="<%=Backform.controlLabelClassName%>">',
+      '  <%=label%>',
+      '</label>',
+      '<div class="<%=Backform.controlsClassName%>">',
+      '  <div class="<%=rowClass%>">',
+      '    <% for (var i=0; i < options.length; i++) { %>',
+      '      <% var option = options[i]; %>',
+      '      <div class="<%=columnClass%><%=12 / columns%>">',
+      '        <div class="checkbox">',
+      '          <label>',
+      '            <input type="<%=type%>" name="<%=name%>" value="<%=option.value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> /> <%-option.label%>',
+      '          </label>',
+      '        </div>',
+      '      </div>',
+      '      <% if ((i + 1) % columns == 0) { %>',
+      '        </div>',
+      '        <div class="<%=rowClass%>">',
+      '      <% } %>',
+      '    <% } %>',
+      '  </div>',
+      '</div>'
+    ].join('\n')),
+    bootstrap2: function () {
+      this.defaults.columnClass = 'span';
+      this.defaults.containerClass = 'span6 offset3';
+      this.defaults.rowClass = 'row-fluid';
+    },
+    render: function () {
+      Backform.CheckboxControl.prototype.render.apply(this, arguments);
+
+      var values = this.model.get(this.field.get('name'));
+
+      this.$el.find('input').each(function () {
+        if (_.indexOf(values, $(this).val()) > -1) {
+          $(this).prop('checked', true);
+        }
+      });
+
+      return this;
+    },
+    getValueFromDOM: function () {
+      var arr = [];
+
+      this.$el.find('input:checked').each(function () {
+        arr.push($(this).val());
+      });
+
+      return arr;
+    }
+  });
+
   _.extend(Backform, {
     buttonStatusErrorClassName: 'text-danger',
     buttonStatusSuccessClassname: 'text-success'
