@@ -495,12 +495,12 @@
       label: '',
       maxlength: 4000,
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       helpMessage: null,
       rows: 3
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>"><%=label%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <textarea class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" maxlength="<%=maxlength%>" rows="<%=rows%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%>><%-value%></textarea>',
       '  <% if (helpMessage && helpMessage.length) { %>',
@@ -522,12 +522,12 @@
       label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       multiple: false,
       helpMessage: null
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%>"><%=label%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <select class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> <%=multiple ? "multiple" : ""%> >',
       '    <% for (var i=0; i < options.length; i++) { %>',
@@ -556,12 +556,12 @@
       label: '',
       options: [], // List of options as [{label:<label>, value:<value>}, ...]
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       height: '78px',
       helpMessage: null
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>"><%=label%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <select multiple="multiple" class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-JSON.stringify(value)%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> style="height:<%=height%>">',
       '    <% for (var i=0; i < options.length; i++) { %>',
@@ -598,11 +598,11 @@
       label: '',
       maxlength: 255,
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       helpMessage: null
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>"><%=label%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <input type="<%=type%>" class="<%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" maxlength="<%=maxlength%>" value="<%-value%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> />',
       '  <% if (helpMessage && helpMessage.length) { %>',
@@ -631,11 +631,11 @@
       label: '',
       controlLabel: '&nbsp;',
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       helpMessage: null
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>"><%=controlLabel%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=controlLabel%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <div class="checkbox">',
       '    <label>',
@@ -665,11 +665,11 @@
       label: '',
       options: [],
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       helpMessage: null
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>"><%=label%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <% for (var i=0; i < options.length; i++) { %>',
       '    <% var option = options[i]; %>',
@@ -703,7 +703,7 @@
       label: '',
       options: {},
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       maxlength: 255,
       helpMessage: null
     },
@@ -741,11 +741,11 @@
       },
       serverDateTimeFormat: 'YYYY-MM-DD[T]HH:mm:ss',
       extraClasses: [],
-      extraLabelClasses: [],
+      extraLabelClass: "",
       helpMessage: null
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>"><%=label%></label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>"><%=label%></label>',
       '<div class="<%=Backform.controlsClassName%>" style="position: relative;">',
       '  <input type="<%=type%>" class="datetimepicker <%=Backform.controlClassName%> <%=extraClasses.join(\' \')%>" name="<%=name%>" value="<%-value%>" placeholder="<%-placeholder%>" <%=disabled ? "disabled" : ""%> <%=required ? "required" : ""%> />',
       '  <% if (helpMessage && helpMessage.length) { %>',
@@ -787,10 +787,10 @@
       message: undefined,
       helpMessage: undefined,
       extraClasses: [],
-      extraLabelClasses: []
+      extraLabelClass: ""
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>">&nbsp;</label>',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>">&nbsp;</label>',
       '<div class="<%=Backform.controlsClassName%>">',
       '  <button type="<%=type%>" name="<%=name%>" class="btn <%=extraClasses.join(\' \')%>" <%=disabled ? "disabled" : ""%> ><%=label%></button>',
       '  <% var cls = ""; if (status == "error") cls = Backform.buttonStatusErrorClassName; if (status == "success") cls = Backform.buttonStatusSuccessClassname; %>',
@@ -818,11 +818,11 @@
       containerClass: 'col-md-6',
       columnClass: 'col-md-',
       rowClass: 'row',
-      extraLabelClasses: [],
+      extraLabelClass: "",
       extraClasses: []
     },
     template: _.template([
-      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClasses.join(\' \')%>">',
+      '<label class="<%=Backform.controlLabelClassName%> <%=extraLabelClass%>">',
       '  <%=label%>',
       '</label>',
       '<div class="<%=Backform.controlsClassName%> <%=extraClasses.join(\' \')%>">',

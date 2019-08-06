@@ -174,7 +174,7 @@ new Backform.Form({
     },
     {name: "dateOfBirth", label: "Date of birth", control: "datepicker", options: {format: "yyyy-mm-dd"}},
     {name: "lifeGoal", label: "Life goal", control: "textarea", extraClasses: ["fancy"], helpMessage: "Be creative!"},
-    {name: "favoriteNumber", label: "Favorite Number", control: "input", type: "number", extraLabelClasses: ["fancy-label"]},
+    {name: "favoriteNumber", label: "Favorite Number", control: "input", type: "number", extraLabelClass: "fancy-label"},
     {
       name: "jsonValue",
       label: "JSON value",
@@ -277,7 +277,7 @@ var fields = [{
   }, {
     control: "button",
     label: "Save to server",
-    extraLabelClasses: ["fancy-label"]
+    extraLabelClass: "fancy-label"
   }];
 
 var form = new Backform.Form({
