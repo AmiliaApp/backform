@@ -794,6 +794,178 @@ _.extend(Backform, {
 
       <div class="row">
         <div class="col-md-12">
+          <h2 id="custom-layout">Custom Markup</h2>
+          <p>
+            To allow even more flexibility like having fields next to each other, Backform allows custom markup.
+            Create the desired markup in a template and define placeholders for the injected fields with <code>data-field="fieldname"</code> attribute.
+            <br />
+            If a field is not in the markup, it will be appended. Eg. see submit button and field "lifeGoal".
+          </p>
+
+      <pre>
+&lt;form id="custom-markup" class="form-horizontal"&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;div class="col-md-6" data-field="id"&gt;&lt;/div&gt;
+    &lt;div class="col-md-6" data-field="salutation"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;div class="col-md-6" data-field="firstName"&gt;&lt;/div&gt;
+    &lt;div class="col-md-6" data-field="lastName"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;hr /&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;div class="col-md-12" data-field="address.address1"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;div class="col-md-12" data-field="address.address2"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;div class="col-md-6" data-field="address.postalCode"&gt;&lt;/div&gt;
+    &lt;div class="col-md-6" data-field="address.city"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;div class="col-md-3" data-field="adult"&gt;&lt;/div&gt;
+    &lt;div class="col-md-9" data-field="address.province"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/form&gt;
+</pre>
+    </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <form id="custom-markup" class="form-horizontal">
+
+            <div class="form-group">
+              <div class="col-md-6" data-field="id"></div>
+              <div class="col-md-6" data-field="salutation"></div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-6" data-field="firstName"></div>
+              <div class="col-md-6" data-field="lastName"></div>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+              <div class="col-md-12" data-field="address.address1"></div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-12" data-field="address.address2"></div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-6" data-field="address.postalCode"></div>
+              <div class="col-md-6" data-field="address.city"></div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-3" data-field="adult"></div>
+              <div class="col-md-9" data-field="address.province"></div>
+            </div>
+
+          </form>
+        </div>
+        <div class="col-md-4">
+          <pre id="custommarkup"></pre>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <p><button class="btn btn-primary show-code" for="#form-code-custommarkup">&lt;/&gt; Show Code</button></p>
+          <pre id="form-code-custommarkup" style="display:none;">
+var custommarkup = new Backbone.Model({
+  id: 101,
+  salutation: "Mr",
+  firstName: "Andre",
+  lastName: "Jones",
+  adult: true,
+  address: {
+  address1: "1751 rue Richardson",
+  address2: "Suite 3.105",
+  city: "Montréal",
+  postalCode: "H3K 1G6",
+  lifeGoal: "To become the best basketball player there is. I want to dunk!",
+  province: "QC"
+  }
+});
+
+new Backform.Form({
+  el: "#custom-markup",
+  model: custommarkup,
+  fields: [
+  {name: "id", label: "Id", control: "uneditable-input"},
+  {name: "firstName", label: "First Name", control: "input"},
+  {name: "lastName", label: "Last Name", control: "input"},
+  {name: "lifeGoal", label: "Life goal", control: "textarea", extraClasses: ["fancy"], helpMessage: "Be creative!"},
+  {name: "adult", label: "Adult", control: "checkbox"},
+  {
+    name: "salutation",
+    label: "Salutation",
+    control: "radio",
+    options: [
+    {label: "Mr.", value: "Mr"},
+    {label: "Mrs.", value: "Mrs"},
+    {label: "Mme.", value: "Mme"}
+    ]
+  },
+  {name: "address.address1", label: "Address1", control: "input"},
+  {name: "address.address2", label: "Address2", control: "input"},
+  {name: "address.city", label: "City", control: "input"},
+  {name: "address.postalCode", label: "Postal Code", control: "input"},
+  {
+    name: "address.province",
+    label: "Province",
+    control: "select",
+    options: [
+    {label: "Alberta", value: "AB"},
+    {label: "British Columbia", value: "BC"},
+    {label: "Manitoba", value: "MB"},
+    {label: "New Brunswick", value: "NB"},
+    {label: "Newfoundland and Labrador", value: "NL"},
+    {label: "Northwest Territories", value: "NT"},
+    {label: "Nova Scotia", value: "NS"},
+    {label: "Nunavut", value: "NU"},
+    {label: "Ontario", value: "ON"},
+    {label: "Prince Edward Island", value: "PE"},
+    {label: "Québec", value: "QC"},
+    {label: "Saskatchewan", value: "SK"},
+    {label: "Yukon", value: "YT"}
+    ]
+  },
+  {control: "button", label: "Save to server"}
+  ],
+  events: {
+  "submit": function(e) {
+    e.preventDefault();
+    this.model.save().done(function(result) {
+    alert("Form saved to server!");
+    });
+    return false;
+  }
+  }
+}).render();
+
+custommarkup.on("change", function() {
+  $("#custommarkup").text(JSON.stringify(custommarkup.toJSON(), null, 2));
+}).trigger("change");
+</pre>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
           <h1 id="Boostrap2">Boostrap 2.3</h1>
           <p>
             In addition, you can switch to Bootstrap 2.3 by calling the <code>Backform.bootstrap2</code> function.
